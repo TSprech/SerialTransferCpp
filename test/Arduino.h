@@ -91,8 +91,8 @@ class Stream {
 
 
 // private:
-  std::deque<uint8_t> tx_buffer = {};
-  std::deque<uint8_t> rx_buffer = {};
+  std::deque<char> tx_buffer = {};
+  std::deque<char> rx_buffer = {};
 };
 
 inline Stream Serial;

@@ -33,5 +33,5 @@ enable_testing()
 target_link_libraries(SerialTransferCpp PUBLIC GTest::gtest_main)
 target_link_libraries(SerialTransferCpp PUBLIC GTest::gmock_main)
 
-include(googletest)
+include(GoogleTest)
 gtest_discover_tests(SerialTransferCpp)

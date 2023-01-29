@@ -16,6 +16,8 @@ add_executable(SerialTransferCpp main.cpp
 target_include_directories(SerialTransferCpp PUBLIC src)
 target_include_directories(SerialTransferCpp PUBLIC test)
 
+target_link_options(SerialTransferCpp PUBLIC --coverage)
+target_compile_options(SerialTransferCpp PUBLIC --coverage)
 
 include(FetchContent)
 FetchContent_Declare(

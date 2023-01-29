@@ -5,8 +5,11 @@
 #include <iostream>
 
 #include "SerialTransferCpp.h"
+#include "SerialTransfer.h"
+#include "Arduino.h"
 
 SerialTransfer myTransfer;
+stcpp::SerialTransfer cppTransfer;
 
 struct __attribute__((packed)) STRUCT {
   char z;
@@ -16,22 +19,27 @@ struct __attribute__((packed)) STRUCT {
 char arr[] = "hello";
 
 int main() {
-  myTransfer.begin(stdout);
+  myTransfer.begin(Serial);
 
   testStruct.z = '$';
   testStruct.y = 4.5;
 
-  // use this variable to keep track of how many
-  // bytes we're stuffing in the transmit buffer
   uint16_t sendSize = 0;
-
-  ///////////////////////////////////////// Stuff buffer with struct
   sendSize = myTransfer.txObj(testStruct, sendSize);
-
-  ///////////////////////////////////////// Stuff buffer with array
   sendSize = myTransfer.txObj(arr, sendSize);
-
-  ///////////////////////////////////////// Send buffer
   myTransfer.sendData(sendSize);
+
+  for (auto ch : Serial.tx_buffer) {
+    std::cout << ch;
+  }
+
+  std::cout << "\n------------------------------------------------------------------------\n";
+
+  cppTransfer.begin(stdout);
+
+  sendSize = 0;
+  sendSize = cppTransfer.txObj(testStruct, sendSize);
+  sendSize = cppTransfer.txObj(arr, sendSize);
+  cppTransfer.sendData(sendSize);
   return 0;
 }

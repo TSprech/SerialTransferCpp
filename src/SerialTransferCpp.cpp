@@ -1,4 +1,5 @@
 #include "SerialTransferCpp.h"
+
 #include "InterfaceConfig.hpp"
 #include "millis.h"
 
@@ -70,14 +71,6 @@ namespace stcpp {
       port.put_c(i);
     }
 
-//    fwrite(packet.preamble, sizeof(packet.preamble[0]), sizeof(packet.preamble), stdout);
-//    fwrite(packet.txBuff, sizeof(packet.txBuff[0]), numBytesIncl, stdout);
-//    fwrite(packet.postamble, sizeof(packet.postamble[0]), sizeof(packet.postamble), stdout);
-
-    //	port->write(packet.preamble, sizeof(packet.preamble));
-    //	port->write(packet.txBuff, numBytesIncl);
-    //	port->write(packet.postamble, sizeof(packet.postamble));
-
     return numBytesIncl;
   }
 
@@ -142,7 +135,6 @@ namespace stcpp {
   bool SerialTransfer::tick() {
     if (available())
       return true;
-
     return false;
   }
 

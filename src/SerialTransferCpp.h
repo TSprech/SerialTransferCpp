@@ -1,13 +1,13 @@
 #pragma once
 #include <cstdint>
 #include <cstdio>
-#include "InterfaceConfig.hpp"
 
+#include "InterfaceConfig.hpp"
 #include "PacketCpp.h"
 
 namespace stcpp {
   class SerialTransfer {
-   public:  // <<---------------------------------------//public
+   public:
     Packet packet;
     uint8_t bytesRead = 0;
     int8_t status = 0;
@@ -90,7 +90,7 @@ namespace stcpp {
       return sendData(packet.txObj(val, 0, len));
     }
 
-   private:  // <<---------------------------------------//private
+   private:
     SerialConfig port;
     uint32_t timeout;
   };

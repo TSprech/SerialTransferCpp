@@ -221,9 +221,6 @@ namespace stcpp {
                 char str[60] = {};
                 sprintf(str, "ERROR: No callback available for packet ID %u", idByte);
                 puts(debugPort, str);
-//                fprintf(debugPort, "ERROR: No callback available for packet ID %u", idByte);
-                //						debugPort->print(F("ERROR: No callback available for packet ID "));
-                //						debugPort->println(idByte);
               }
             }
             packetStart = 0;  // reset the timer
@@ -235,8 +232,6 @@ namespace stcpp {
 
           if (debug)
             puts(debugPort, "ERROR: STOP_BYTE_ERROR");
-//            fputs("ERROR: STOP_BYTE_ERROR", debugPort);
-          //				debugPort->println("ERROR: STOP_BYTE_ERROR");
 
           reset();
           return bytesRead;
@@ -248,9 +243,6 @@ namespace stcpp {
             char str[40] = {};
             sprintf(str, "ERROR: Undefined state %i", state);
             puts(debugPort, str);
-//            fprintf(debugPort, "ERROR: Undefined state %i", state);
-            //				debugPort->print("ERROR: Undefined state ");
-            //				debugPort->println(state);
           }
 
           reset();

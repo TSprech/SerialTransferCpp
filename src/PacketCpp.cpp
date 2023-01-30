@@ -43,7 +43,7 @@ namespace stcpp {
  -------
   * void
 */
-  void Packet::begin(const bool& _debug, FILE* _debugPort, const uint32_t& _timeout) {
+  void Packet::begin(const bool& _debug, SerialConfig& _debugPort, const uint32_t& _timeout) {
     debugPort = _debugPort;
     debug = _debug;
     timeout = _timeout;
@@ -116,8 +116,7 @@ namespace stcpp {
     if (!packet_fresh)  // packet is stale, start over.
     {
       if (debug)
-        fputs("ERROR: STALE PACKET", debugPort);
-      //			debugPort->println("ERROR: STALE PACKET");
+          puts(debugPort, "ERROR: STALE PACKET");
 
       bytesRead = 0;
       state = find_start_byte;
@@ -165,8 +164,7 @@ namespace stcpp {
             status = PAYLOAD_ERROR;
 
             if (debug)
-              fputs("ERROR: PAYLOAD_ERROR", debugPort);
-            //					debugPort->println("ERROR: PAYLOAD_ERROR");
+              puts(debugPort, "ERROR: PAYLOAD_ERROR");
 
             reset();
             return bytesRead;
@@ -198,8 +196,7 @@ namespace stcpp {
             status = CRC_ERROR;
 
             if (debug)
-              fputs("ERROR: CRC_ERROR", debugPort);
-            //					debugPort->println("ERROR: CRC_ERROR");
+              puts(debugPort, "ERROR: CRC_ERROR");
 
             reset();
             return bytesRead;
@@ -221,7 +218,10 @@ namespace stcpp {
               if (idByte < callbacksLen)
                 callbacks[idByte]();
               else if (debug) {
-                fprintf(debugPort, "ERROR: No callback available for packet ID %u", idByte);
+                char str[60] = {};
+                sprintf(str, "ERROR: No callback available for packet ID %u", idByte);
+                puts(debugPort, str);
+//                fprintf(debugPort, "ERROR: No callback available for packet ID %u", idByte);
                 //						debugPort->print(F("ERROR: No callback available for packet ID "));
                 //						debugPort->println(idByte);
               }
@@ -234,7 +234,8 @@ namespace stcpp {
           status = STOP_BYTE_ERROR;
 
           if (debug)
-            fputs("ERROR: STOP_BYTE_ERROR", debugPort);
+            puts(debugPort, "ERROR: STOP_BYTE_ERROR");
+//            fputs("ERROR: STOP_BYTE_ERROR", debugPort);
           //				debugPort->println("ERROR: STOP_BYTE_ERROR");
 
           reset();
@@ -244,7 +245,10 @@ namespace stcpp {
 
         default: {
           if (debug) {
-            fprintf(debugPort, "ERROR: Undefined state %i", state);
+            char str[40] = {};
+            sprintf(str, "ERROR: Undefined state %i", state);
+            puts(debugPort, str);
+//            fprintf(debugPort, "ERROR: Undefined state %i", state);
             //				debugPort->print("ERROR: Undefined state ");
             //				debugPort->println(state);
           }

@@ -59,7 +59,18 @@ jobs:
 
     - name: LCOV Filter
       # Remove the files that should not show up in the test report (exclude the entire test folder)
-      run: lcov --remove lcov.info '*/test/*' -o lcov_filtered.info
+#      run: lcov --remove lcov.info '*/test/*' -o lcov_filtered.info
+      run: lcov --remove lcov.info -o lcov_filtered.info '*/test/*'\
+        'src/I2CTransfer.cpp'\
+        'src/I2CTransfer.h'\
+        'src/millis.h'\
+        'src/Packet.cpp'\
+        'src/Packet.h'\
+        'src/PacketCRC.h'\
+        'src/SerialTransfer.cpp'\
+        'src/SerialTransfer.h'\
+        'src/SPITransfer.h'\
+        'src/SPITransfer.cpp'
 
     - name: Coveralls
       uses: coverallsapp/github-action@1.1.3

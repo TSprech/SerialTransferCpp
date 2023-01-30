@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <cstdio>
+#include "InterfaceConfig.hpp"
 
 #include "PacketCpp.h"
 
@@ -11,8 +12,8 @@ namespace stcpp {
     uint8_t bytesRead = 0;
     int8_t status = 0;
 
-    void begin(FILE* _port, const configST configs);
-    void begin(FILE* _port, const bool _debug = true, FILE* _debugPort = stdout, uint32_t _timeout = DEFAULT_TIMEOUT);
+    void begin(SerialConfig& _port, const configST configs);
+    void begin(SerialConfig& _port, const bool _debug = true, SerialConfig& _debugPort = stdio_config, uint32_t _timeout = DEFAULT_TIMEOUT);
     uint8_t sendData(const uint16_t& messageLen, const uint8_t packetID = 0);
     uint8_t available();
     bool tick();
@@ -90,7 +91,7 @@ namespace stcpp {
     }
 
    private:  // <<---------------------------------------//private
-    FILE* port;
+    SerialConfig port;
     uint32_t timeout;
   };
 }  // namespace stcpp

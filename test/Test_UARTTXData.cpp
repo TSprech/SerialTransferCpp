@@ -2,13 +2,20 @@
 // Created by treys on 2023/01/29 14:52:40.
 //
 
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
-#include "SerialTransferCpp.h"
-#include "SerialTransfer.h"
 #include "Arduino.h"
+#include "SerialTransfer.h"
+#include "SerialTransferCpp.h"
+#include "gtest/gtest.h"
 
 namespace {
+  void print_captured_data(std::string captured) { // Used for generating buffers that can be used for the RX tests
+    std::cout << "\nData:\n";
+    for (auto ch : captured) {
+      std::cout << std::hex << std::setfill('0') << std::setw(2) << ",0x" << static_cast<int>(static_cast<uint8_t>(ch));
+    }
+    std::cout << "\n";
+  }
+
   TEST(SerialTransferCpp, uart_tx_data) {
     testing::internal::CaptureStdout();
 
@@ -32,7 +39,7 @@ namespace {
     sendSize = myTransfer.txObj(arr, sendSize);
     myTransfer.sendData(sendSize);
 
-    cppTransfer.begin(stdout);
+    cppTransfer.begin(stdio_config);
 
     sendSize = 0;
     sendSize = cppTransfer.txObj(testStruct, sendSize);
@@ -40,6 +47,7 @@ namespace {
     cppTransfer.sendData(sendSize);
 
     auto stdout_captured = testing::internal::GetCapturedStdout();
+    print_captured_data(stdout_captured);
     EXPECT_EQ(Serial.tx_buffer.size(), stdout_captured.size());
     for (int i = 0; i < stdout_captured.size(); ++i) {
       EXPECT_EQ(Serial.tx_buffer[i], stdout_captured[i]);
@@ -64,11 +72,12 @@ namespace {
 
     myTransfer.sendDatum(testStruct);
 
-    cppTransfer.begin(stdout);
+    cppTransfer.begin(stdio_config);
 
     cppTransfer.sendDatum(testStruct);
 
     auto stdout_captured = testing::internal::GetCapturedStdout();
+    print_captured_data(stdout_captured);
     EXPECT_EQ(Serial.tx_buffer.size(), stdout_captured.size());
     for (int i = 0; i < stdout_captured.size(); ++i) {
       EXPECT_EQ(Serial.tx_buffer[i], stdout_captured[i]);
@@ -87,56 +96,55 @@ namespace {
 
     myTransfer.begin(Serial);
 
-    myTransfer.sendDatum(fileName); // Send filename
+    myTransfer.sendDatum(fileName);  // Send filename
 
-    uint16_t numPackets = fileSize / (MAX_PACKET_SIZE - 2); // Reserve two bytes for current file index
+    uint16_t numPackets = fileSize / (MAX_PACKET_SIZE - 2);  // Reserve two bytes for current file index
 
-    if (fileSize % MAX_PACKET_SIZE) // Add an extra transmission if needed
+    if (fileSize % MAX_PACKET_SIZE)  // Add an extra transmission if needed
       numPackets++;
 
-    for (uint16_t i=0; i<numPackets; i++) // Send all data within the file across multiple packets
+    for (uint16_t i = 0; i < numPackets; i++)  // Send all data within the file across multiple packets
     {
-      uint16_t fileIndex = i * MAX_PACKET_SIZE; // Determine the current file index
+      uint16_t fileIndex = i * MAX_PACKET_SIZE;  // Determine the current file index
       uint8_t dataLen = MAX_PACKET_SIZE - 2;
 
-      if ((fileIndex + (MAX_PACKET_SIZE - 2)) > fileSize) // Determine data length for the last packet if file length is not an exact multiple of MAX_PACKET_SIZE-2
+      if ((fileIndex + (MAX_PACKET_SIZE - 2)) > fileSize)  // Determine data length for the last packet if file length is not an exact multiple of MAX_PACKET_SIZE-2
         dataLen = fileSize - fileIndex;
 
-      uint8_t sendSize = myTransfer.txObj(fileIndex); // Stuff the current file index
-      sendSize = myTransfer.txObj(file[fileIndex], sendSize, dataLen); // Stuff the current file data
+      uint8_t sendSize = myTransfer.txObj(fileIndex);                   // Stuff the current file index
+      sendSize = myTransfer.txObj(file[fileIndex], sendSize, dataLen);  // Stuff the current file data
 
-      myTransfer.sendData(sendSize, 1); // Send the current file index and data
+      myTransfer.sendData(sendSize, 1);  // Send the current file index and data
     }
 
+    cppTransfer.begin(stdio_config);
 
+    cppTransfer.sendDatum(fileName);  // Send filename
 
-    cppTransfer.begin(stdout);
+    numPackets = fileSize / (MAX_PACKET_SIZE - 2);  // Reserve two bytes for current file index
 
-    cppTransfer.sendDatum(fileName); // Send filename
-
-    numPackets = fileSize / (MAX_PACKET_SIZE - 2); // Reserve two bytes for current file index
-
-    if (fileSize % MAX_PACKET_SIZE) // Add an extra transmission if needed
+    if (fileSize % MAX_PACKET_SIZE)  // Add an extra transmission if needed
       numPackets++;
 
-    for (uint16_t i=0; i<numPackets; i++) // Send all data within the file across multiple packets
+    for (uint16_t i = 0; i < numPackets; i++)  // Send all data within the file across multiple packets
     {
-      uint16_t fileIndex = i * MAX_PACKET_SIZE; // Determine the current file index
+      uint16_t fileIndex = i * MAX_PACKET_SIZE;  // Determine the current file index
       uint8_t dataLen = MAX_PACKET_SIZE - 2;
 
-      if ((fileIndex + (MAX_PACKET_SIZE - 2)) > fileSize) // Determine data length for the last packet if file length is not an exact multiple of MAX_PACKET_SIZE-2
+      if ((fileIndex + (MAX_PACKET_SIZE - 2)) > fileSize)  // Determine data length for the last packet if file length is not an exact multiple of MAX_PACKET_SIZE-2
         dataLen = fileSize - fileIndex;
 
-      uint8_t sendSize = cppTransfer.txObj(fileIndex); // Stuff the current file index
-      sendSize = cppTransfer.txObj(file[fileIndex], sendSize, dataLen); // Stuff the current file data
+      uint8_t sendSize = cppTransfer.txObj(fileIndex);                   // Stuff the current file index
+      sendSize = cppTransfer.txObj(file[fileIndex], sendSize, dataLen);  // Stuff the current file data
 
-      cppTransfer.sendData(sendSize, 1); // Send the current file index and data
+      cppTransfer.sendData(sendSize, 1);  // Send the current file index and data
     }
 
     auto stdout_captured = testing::internal::GetCapturedStdout();
+    print_captured_data(stdout_captured);
     EXPECT_EQ(Serial.tx_buffer.size(), stdout_captured.size());
     for (int i = 0; i < stdout_captured.size(); ++i) {
       EXPECT_EQ(Serial.tx_buffer[i], stdout_captured[i]);
     }
   }
-}
+}  // namespace

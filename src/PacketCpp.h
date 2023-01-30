@@ -16,6 +16,7 @@
 #include <cstdio>
 
 #include "PacketCRCCpp.h"
+#include "InterfaceConfig.hpp"
 
 namespace stcpp {
   typedef void (*functionPtr)();
@@ -38,7 +39,7 @@ namespace stcpp {
   const uint8_t DEFAULT_TIMEOUT = 50;
 
   struct configST {
-    FILE* debugPort = stdout;
+    SerialConfig debugPort = stdio_config;
     bool debug = true;
     const functionPtr* callbacks = NULL;
     uint8_t callbacksLen = 0;
@@ -56,7 +57,7 @@ namespace stcpp {
     int8_t status = 0;
 
     void begin(const configST& configs);
-    void begin(const bool& _debug = true, FILE* _debugPort = stdout, const uint32_t& _timeout = DEFAULT_TIMEOUT);
+    void begin(const bool& _debug = true, SerialConfig& _debugPort = stdio_config, const uint32_t& _timeout = DEFAULT_TIMEOUT);
     uint8_t constructPacket(const uint16_t& messageLen, const uint8_t& packetID = 0);
     uint8_t parse(const uint8_t& recChar, const bool& valid = true);
     uint8_t currentPacketID();
@@ -155,7 +156,7 @@ namespace stcpp {
     const functionPtr* callbacks = NULL;
     uint8_t callbacksLen = 0;
 
-    FILE* debugPort;
+    SerialConfig debugPort;
     bool debug = false;
 
     uint8_t bytesToRec = 0;

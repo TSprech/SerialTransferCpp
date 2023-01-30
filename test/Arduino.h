@@ -11,7 +11,9 @@
 #include <string_view>
 #include <cstring>
 
-#define F
+inline auto F(std::string_view in) {
+  return in;
+}
 
 #define HEX 0
 

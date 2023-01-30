@@ -1,48 +1,42 @@
 #include "SerialTransferCpp.h"
-
+#include "InterfaceConfig.hpp"
 #include "millis.h"
 
 namespace stcpp {
-  int fpeekc(FILE* stream) {
-    auto c = fgetc(stream);
-    ungetc(c, stream);
-    return c;
-  }
-
   /*
- void SerialTransfer::begin(FILE* _port, configST configs)
+ void SerialTransfer::begin(SerialConfig& _port, configST configs)
  Description:
  ------------
   * Advanced initializer for the SerialTransfer Class
  Inputs:
  -------
-  * const FILE* _port - Serial port to communicate over
+  * const SerialConfig& _port - Serial port to communicate over
   * const configST configs - Struct that holds config
   values for all possible initialization parameters
  Return:
  -------
   * void
 */
-  void SerialTransfer::begin(FILE* _port, const configST configs) {
+  void SerialTransfer::begin(SerialConfig& _port, const configST configs) {
     port = _port;
     packet.begin(configs);
   }
 
   /*
- void SerialTransfer::begin(FILE* _port, const bool _debug, FILE* _debugPort)
+ void SerialTransfer::begin(SerialConfig& _port, const bool _debug, SerialConfig& _debugPort)
  Description:
  ------------
   * Simple initializer for the SerialTransfer Class
  Inputs:
  -------
-  * const FILE* _port - Serial port to communicate over
+  * const SerialConfig& _port - Serial port to communicate over
   * const bool _debug - Whether or not to print error messages
-  * const FILE* _debugPort - Serial port to print error messages
+  * const SerialConfig& _debugPort - Serial port to print error messages
  Return:
  -------
   * void
 */
-  void SerialTransfer::begin(FILE* _port, const bool _debug, FILE* _debugPort, uint32_t _timeout) {
+  void SerialTransfer::begin(SerialConfig& _port, const bool _debug, SerialConfig& _debugPort, uint32_t _timeout) {
     port = _port;
     timeout = _timeout;
     packet.begin(_debug, _debugPort, _timeout);
@@ -66,20 +60,19 @@ namespace stcpp {
     uint8_t numBytesIncl;
 
     numBytesIncl = packet.constructPacket(messageLen, packetID);
-//    for (unsigned char i : packet.preamble) {
-//      putc(i, stdout);
-//    }
-//    for (int i = 0; i < numBytesIncl; ++i) {
-//      putc(packet.txBuff[i], stdout);
-//    }
-//
-//    for (unsigned char i : packet.postamble) {
-//      putc(i, stdout);
-//    }
+    for (unsigned char i : packet.preamble) {
+      port.put_c(i);
+    }
+    for (int i = 0; i < numBytesIncl; ++i) {
+      port.put_c(packet.txBuff[i]);
+    }
+    for (unsigned char i : packet.postamble) {
+      port.put_c(i);
+    }
 
-    fwrite(packet.preamble, sizeof(packet.preamble[0]), sizeof(packet.preamble), stdout);
-    fwrite(packet.txBuff, sizeof(packet.txBuff[0]), numBytesIncl, stdout);
-    fwrite(packet.postamble, sizeof(packet.postamble[0]), sizeof(packet.postamble), stdout);
+//    fwrite(packet.preamble, sizeof(packet.preamble[0]), sizeof(packet.preamble), stdout);
+//    fwrite(packet.txBuff, sizeof(packet.txBuff[0]), numBytesIncl, stdout);
+//    fwrite(packet.postamble, sizeof(packet.postamble[0]), sizeof(packet.postamble), stdout);
 
     //	port->write(packet.preamble, sizeof(packet.preamble));
     //	port->write(packet.txBuff, numBytesIncl);
@@ -105,11 +98,11 @@ namespace stcpp {
     bool valid = false;
     uint8_t recChar = 0xFF;
 
-    if (fpeekc(stdin) != EOF) {
+    if (port.peek_c()) {
       valid = true;
 
-      while (fpeekc(stdin) != EOF) {
-        recChar = fgetc(stdin);
+      while (port.peek_c()) {
+        recChar = port.get_c();
 
         bytesRead = packet.parse(recChar, valid);
         status = packet.status;
@@ -183,8 +176,8 @@ namespace stcpp {
   * void
 */
   void SerialTransfer::reset() {
-    while (fpeekc(stdin) != EOF)
-      fgetc(stdin);
+    while (port.peek_c())
+      port.get_c();
 
     packet.reset();
     status = packet.status;

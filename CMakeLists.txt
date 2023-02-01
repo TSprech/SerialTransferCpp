@@ -4,7 +4,7 @@ project(SerialTransferCpp)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 17)
 
-add_executable(SerialTransferCpp main.cpp
+add_executable(SerialTransferCpp
         src/SerialTransferCpp.cpp
         src/PacketCpp.cpp
         src/SerialTransfer.cpp

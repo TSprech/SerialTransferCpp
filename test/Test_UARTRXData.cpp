@@ -3,7 +3,7 @@
 //
 
 #include "gtest/gtest.h"
-#include "SerialTransferCpp.h"
+#include "SerialTransferCpp.hpp"
 #include "SerialTransfer.h"
 #include "Arduino.h"
 #include <deque>

@@ -1,8 +1,8 @@
-#include "PacketCpp.h"
+#include "PacketCpp.hpp"
 
 #include <cstring>
 
-#include "millis.h"
+#include "Millis.hpp"
 
 namespace stcpp {
   PacketCRC crc;

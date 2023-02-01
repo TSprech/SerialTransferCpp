@@ -15,8 +15,8 @@
 #include <cstdint>
 #include <cstdio>
 
-#include "PacketCRCCpp.h"
-#include "InterfaceConfig.hpp"
+#include "PacketCRCCpp.hpp"
+#include "SerialConfig.hpp"
 
 namespace stcpp {
   typedef void (*functionPtr)();

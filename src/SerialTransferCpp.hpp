@@ -2,8 +2,8 @@
 #include <cstdint>
 #include <cstdio>
 
-#include "InterfaceConfig.hpp"
-#include "PacketCpp.h"
+#include "PacketCpp.hpp"
+#include "SerialConfig.hpp"
 
 namespace stcpp {
   class SerialTransfer {

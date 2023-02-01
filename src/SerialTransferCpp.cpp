@@ -1,7 +1,7 @@
-#include "SerialTransferCpp.h"
+#include "SerialTransferCpp.hpp"
 
-#include "InterfaceConfig.hpp"
-#include "millis.h"
+#include "Millis.hpp"
+#include "SerialConfig.hpp"
 
 namespace stcpp {
   /*

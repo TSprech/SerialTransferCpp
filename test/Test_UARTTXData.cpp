@@ -4,7 +4,7 @@
 
 #include "Arduino.h"
 #include "SerialTransfer.h"
-#include "SerialTransferCpp.h"
+#include "SerialTransferCpp.hpp"
 #include "gtest/gtest.h"
 
 namespace {
